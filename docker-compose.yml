@@ -1,0 +1,34 @@
+version: '3'
+
+services:
+  nginx:
+    extends:
+      file: docker-config.yml
+      service: nginx # nginx-ssl for SSL
+    image: nginx:alpine
+    container_name: nginx_hk_pcht
+    depends_on:
+      - server
+    networks:
+      - pchat
+    volumes:
+      - ./client/dist:/usr/share/nginx/html
+  
+  server:
+    extends:
+      file: docker-config.yml
+      service: server # server-ssl for SSL
+    container_name: node_socket_hk
+    build: 
+      context: ./server
+    expose:
+      - "1071"
+    networks:
+      - pchat
+    environment:
+      PORT: 1071
+
+
+networks:
+  pchat:
+    driver: bridge
